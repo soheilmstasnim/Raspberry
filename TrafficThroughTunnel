@@ -1,0 +1,46 @@
+# Shoe Wifi Pass and SSID
+/etc/wpa_supplicant/wpa_supplicant.conf
+
+
+interface wlan0
+static ip_address=192.168.1.100/24
+#static ip6_address=fd51:42f8:caae:d92e::ff/64
+static routers=192.168.1.1
+static domain_name_servers=8.8.8.8
+
+
+interface=eth0       # Use interface eth0  
+listen-address=192.168.220.1   # Specify the address to listen on  
+bind-dynamic         # Bind to the interface
+server=8.8.8.8       # Use Google DNS  
+domain-needed        # Don't forward short names  
+bogus-priv           # Drop the non-routed address spaces.  
+dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time  
+
+
+iptables -t nat -A POSTROUTING -i enxb827eb631bfd -o tun0 -j MASQUERADE
+
+
+==========openconnect.conf=========
+no-dtls
+protocol=anyconnect
+user ir6m37143
+#key-password 0265
+background
+servercert pin-sha256:3F56qEYABwVkfvm3X4j6H8CutVE31Hp3HtMj7voH3Tc=
+passwd-on-stdin
+
+======
+
+
+=====rc.local=====
+iptables-restore < /etc/iptables-v4
+$? > /root/log.txt
+#sleep 5
+#echo "0265" | openconnect --config=/root/openconnect.conf https://cnl.onspeed.org
+exit 0
+========
+
+ifconfig wlan0 mtu 1492 up
+
+
